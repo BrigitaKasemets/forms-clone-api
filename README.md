@@ -1,68 +1,66 @@
-Forms Clone API
+# Forms Clone API
 
 A RESTful API for managing forms and user sessions, built with Express.js. This API allows users to create, update, and manage forms efficiently.
 
-Features
+## Features
 
-User Session Management: Create, retrieve, and delete user sessions.
+- **User Session Management:** Create, retrieve, and delete user sessions.
+- **Form Management:** Create, retrieve, update, and delete forms.
+- **Swagger Documentation:** Interactive API documentation available at `/api-docs`.
 
-Form Management: Create, retrieve, update, and delete forms.
+## Getting Started
 
-Swagger Documentation: Interactive API documentation available at /api-docs.
+### Prerequisites
 
-Getting Started
+- Node.js (v16 or higher)
+- npm (v8 or higher)
 
-Prerequisites
-
-Node.js (v16 or higher)
-
-npm (v8 or higher)
-
-Installation
+### Installation
 
 Clone the repository:
 
+```sh
 git clone https://github.com/BrigitaKasemets/FormsCloneAPI.git
 cd FormsCloneAPI
+```
 
 Install dependencies:
 
+```sh
 npm install
+```
 
-Start the server
+### Start the server
 
+```sh
 npm run dev
+```
 
-Access the API at http://localhost:3000.
+Access the API at [http://localhost:300](http://localhost:3000)0.
 
-API Documentation
+## API Documentation
 
 The API is documented using Swagger. You can access the interactive documentation at:
 
-http://localhost:3000/api-docs/
+http\://localhost:3000/api-docs/
 
-Endpoints
+## Endpoints
 
-Sessions
+### **Sessions**
 
-POST /sessions - Create a new session
+- `POST /sessions` - Create a new session
+- `GET /sessions` - Retrieve current session
+- `DELETE /sessions` - Logout user
 
-GET /sessions - Retrieve current session
+### **Forms**
 
-DELETE /sessions - Logout user
+- `GET /forms` - Retrieve all forms
+- `POST /forms` - Create a new form
+- `GET /forms/:formId` - Retrieve a specific form
+- `PATCH /forms/:formId` - Update a form
+- `DELETE /forms/:formId` - Delete a form
 
-Forms
-
-GET /forms - Retrieve all forms
-
-POST /forms - Create a new form
-
-GET /forms/:formId - Retrieve a specific form
-
-PATCH /forms/:formId - Update a form
-
-DELETE /forms/:formId - Delete a form
-
-License
+## License
 
 This project is licensed under the MIT License.
+
