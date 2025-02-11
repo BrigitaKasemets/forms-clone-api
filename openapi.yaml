@@ -19,6 +19,8 @@ tags:
     description: Operations related to user responses to forms
   - name: sessions
     description: Operations related to user authentication (sessions)
+  - name: users
+    description: Operations related to managing users
 
 paths:
   /sessions:
@@ -452,6 +454,114 @@ paths:
         "401":
           description: Unauthorized
 
+  /users:
+    get:
+      tags:
+        - users
+      summary: List all users
+      operationId: listUsers
+      responses:
+        "200":
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+    post:
+      tags:
+        - users
+      summary: Create a new user (sign up)
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Invalid input (e.g., email already taken)
+
+  /users/{userId}:
+    get:
+      tags:
+        - users
+      summary: Get details of a specific user
+      operationId: getUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: User not found
+        "401":
+          description: Unauthorized
+    patch:
+      tags:
+        - users
+      summary: Update part of an existing user
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: User not found
+        "401":
+          description: Unauthorized
+    delete:
+      tags:
+        - users
+      summary: Delete a user
+      operationId: deleteUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: User deleted
+        "404":
+          description: User not found
+        "401":
+          description: Unauthorized
+
 components:
   securitySchemes:
     BearerAuth:
@@ -482,6 +592,9 @@ components:
         userId:
           type: string
           description: Unique identifier for the authenticated user
+      required:
+        - token
+        - userId
 
     FormCreate:
       type: object
@@ -516,6 +629,11 @@ components:
         updatedAt:
           type: string
           format: date-time
+      required:
+        - id
+        - title
+        - createdAt
+        - updatedAt
 
     QuestionCreate:
       type: object
@@ -525,6 +643,10 @@ components:
         type:
           type: string
           enum: [shorttext, paragraph, multiplechoice, checkbox, dropdown]
+        options:
+          type: array
+          items:
+            type: string
       required:
         - text
         - type
@@ -548,12 +670,22 @@ components:
         type:
           type: string
           enum: [shorttext, paragraph, multiplechoice, checkbox, dropdown]
+        options:
+          type: array
+          items:
+            type: string
         createdAt:
           type: string
           format: date-time
         updatedAt:
           type: string
           format: date-time
+      required:
+        - id
+        - text
+        - type
+        - createdAt
+        - updatedAt
 
     ResponseCreate:
       type: object
@@ -567,6 +699,9 @@ components:
                 type: string
               answer:
                 type: string
+            required:
+              - questionId
+              - answer
       required:
         - answers
 
@@ -599,12 +734,72 @@ components:
                 type: string
               answer:
                 type: string
+            required:
+              - questionId
+              - answer
         createdAt:
           type: string
           format: date-time
         updatedAt:
           type: string
           format: date-time
+      required:
+        - id
+        - formId
+        - answers
+        - createdAt
+        - updatedAt
+
+    UserCreate:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        name:
+          type: string
+      required:
+        - email
+        - password
+        - name
+
+    UserUpdate:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        name:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - email
+        - name
+        - createdAt
+        - updatedAt
 
 security:
   - BearerAuth: []
