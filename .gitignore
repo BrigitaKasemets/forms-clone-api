@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+
+# Logs
+logs
+
+# Build
+dist/
+build/
