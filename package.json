@@ -1,0 +1,39 @@
+{
+  "name": "forms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "init-db": "node src/db/init.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrigitaKasemets/Forms.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BrigitaKasemets/Forms/issues"
+  },
+  "homepage": "https://github.com/BrigitaKasemets/Forms#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "sqlite3": "^5.1.7",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^11.0.5",
+    "yaml": "^2.7.0",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

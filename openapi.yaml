@@ -1,0 +1,610 @@
+openapi: 3.0.0
+info:
+  title: Google Forms Clone API
+  version: "1.0.0"
+  description: >
+    An example OpenAPI spec for a Google Forms–like service.  
+    Uses single-word plural nouns for resource names and /sessions for authentication.
+
+servers:
+  - url: /
+    description: Production server
+
+tags:
+  - name: forms
+    description: Operations related to managing forms
+  - name: questions
+    description: Operations related to managing questions within a form
+  - name: responses
+    description: Operations related to user responses to forms
+  - name: sessions
+    description: Operations related to user authentication (sessions)
+
+paths:
+  /sessions:
+    post:
+      tags:
+        - sessions
+      summary: Create a new session (login)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SessionCreate"
+      responses:
+        "201":
+          description: Session created successfully (logged in)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "401":
+          description: Invalid credentials
+    get:
+      tags:
+        - sessions
+      summary: Retrieve current session details
+      operationId: getSession
+      responses:
+        "200":
+          description: Returns current session info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "401":
+          description: Not authenticated (no valid session)
+    delete:
+      tags:
+        - sessions
+      summary: End current session (logout)
+      operationId: deleteSession
+      responses:
+        "204":
+          description: Session deleted (logged out)
+        "401":
+          description: Not authenticated
+
+  /forms:
+    get:
+      tags:
+        - forms
+      summary: List all forms
+      operationId: listForms
+      responses:
+        "200":
+          description: A list of forms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Form"
+        "401":
+          description: Unauthorized
+    post:
+      tags:
+        - forms
+      summary: Create a new form
+      operationId: createForm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FormCreate"
+      responses:
+        "201":
+          description: Form created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Form"
+        "401":
+          description: Unauthorized
+
+  /forms/{formId}:
+    get:
+      tags:
+        - forms
+      summary: Get details of a specific form
+      operationId: getForm
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Form details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Form"
+        "404":
+          description: Form not found
+        "401":
+          description: Unauthorized
+    patch:
+      tags:
+        - forms
+      summary: Update part of an existing form
+      operationId: updateForm
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FormUpdate"
+      responses:
+        "200":
+          description: Form updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Form"
+        "404":
+          description: Form not found
+        "401":
+          description: Unauthorized
+    delete:
+      tags:
+        - forms
+      summary: Delete a form
+      operationId: deleteForm
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Form deleted
+        "404":
+          description: Form not found
+        "401":
+          description: Unauthorized
+
+  /forms/{formId}/questions:
+    get:
+      tags:
+        - questions
+      summary: List all questions for a specific form
+      operationId: listQuestions
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of questions for the form
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Question"
+        "404":
+          description: Form not found
+        "401":
+          description: Unauthorized
+    post:
+      tags:
+        - questions
+      summary: Create a new question in a specific form
+      operationId: createQuestion
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuestionCreate"
+      responses:
+        "201":
+          description: Question created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+        "404":
+          description: Form not found
+        "401":
+          description: Unauthorized
+
+  /forms/{formId}/questions/{questionId}:
+    get:
+      tags:
+        - questions
+      summary: Get details of a specific question
+      operationId: getQuestion
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Question details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+        "404":
+          description: Question not found
+        "401":
+          description: Unauthorized
+    patch:
+      tags:
+        - questions
+      summary: Update part of an existing question
+      operationId: updateQuestion
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuestionUpdate"
+      responses:
+        "200":
+          description: Question updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+        "404":
+          description: Question not found
+        "401":
+          description: Unauthorized
+    delete:
+      tags:
+        - questions
+      summary: Delete a question
+      operationId: deleteQuestion
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Question deleted
+        "404":
+          description: Question not found
+        "401":
+          description: Unauthorized
+
+  /forms/{formId}/responses:
+    get:
+      tags:
+        - responses
+      summary: List all responses for a specific form
+      operationId: listResponses
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of responses for the form
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Response"
+        "404":
+          description: Form not found
+        "401":
+          description: Unauthorized
+    post:
+      tags:
+        - responses
+      summary: Create a response for a specific form
+      operationId: createResponse
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResponseCreate"
+      responses:
+        "201":
+          description: Response created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+        "404":
+          description: Form not found
+        "401":
+          description: Unauthorized
+
+  /forms/{formId}/responses/{responseId}:
+    get:
+      tags:
+        - responses
+      summary: Get details of a specific response
+      operationId: getResponse
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: responseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Response details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+        "404":
+          description: Response not found
+        "401":
+          description: Unauthorized
+    patch:
+      tags:
+        - responses
+      summary: Update part of an existing response
+      operationId: updateResponse
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: responseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResponseUpdate"
+      responses:
+        "200":
+          description: Response updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+        "404":
+          description: Response not found
+        "401":
+          description: Unauthorized
+    delete:
+      tags:
+        - responses
+      summary: Delete a response
+      operationId: deleteResponse
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: responseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Response deleted
+        "404":
+          description: Response not found
+        "401":
+          description: Unauthorized
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    SessionCreate:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - email
+        - password
+
+    Session:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT or session token
+        userId:
+          type: string
+          description: Unique identifier for the authenticated user
+
+    FormCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+      required:
+        - title
+
+    FormUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+
+    Form:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    QuestionCreate:
+      type: object
+      properties:
+        text:
+          type: string
+        type:
+          type: string
+          enum: [shorttext, paragraph, multiplechoice, checkbox, dropdown]
+      required:
+        - text
+        - type
+
+    QuestionUpdate:
+      type: object
+      properties:
+        text:
+          type: string
+        type:
+          type: string
+          enum: [shorttext, paragraph, multiplechoice, checkbox, dropdown]
+
+    Question:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+        type:
+          type: string
+          enum: [shorttext, paragraph, multiplechoice, checkbox, dropdown]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ResponseCreate:
+      type: object
+      properties:
+        answers:
+          type: array
+          items:
+            type: object
+            properties:
+              questionId:
+                type: string
+              answer:
+                type: string
+      required:
+        - answers
+
+    ResponseUpdate:
+      type: object
+      properties:
+        answers:
+          type: array
+          items:
+            type: object
+            properties:
+              questionId:
+                type: string
+              answer:
+                type: string
+
+    Response:
+      type: object
+      properties:
+        id:
+          type: string
+        formId:
+          type: string
+        answers:
+          type: array
+          items:
+            type: object
+            properties:
+              questionId:
+                type: string
+              answer:
+                type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+security:
+  - BearerAuth: []
