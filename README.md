@@ -1,5 +1,3 @@
-Based on the OpenAPI specification, I'll help enhance the README to include all available endpoints and additional features. Here's a more comprehensive version:
-
 # Forms Clone API
 
 A RESTful API for managing forms and user sessions, built with Express.js. This API allows users to create, update, and manage forms with multiple question types and collect responses efficiently.
