@@ -4,13 +4,12 @@ import yaml from 'yaml';
 import { readFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { verifyToken, sessions } from './middleware/auth.js';
+import { authenticateToken, sessions } from './middleware/auth.js';
 import { userDb } from './db/db.js';
 
 // Määrame projekti juurkausta dünaamiliselt
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
 // Kasutame õiget asukohta (projekti juurkaust)
 const openApiPath = join(__dirname, '../openapi.yaml');
 
@@ -71,7 +70,7 @@ app.post('/sessions', async (req, res) => {
     }
 });
 
-app.get('/sessions', verifyToken, (req, res) => {
+app.get('/sessions', authenticateToken, (req, res) => {
     res.status(200).json({
         token: req.user.token,
         userId: req.user.id,
@@ -83,7 +82,7 @@ app.get('/sessions', verifyToken, (req, res) => {
     });
 });
 
-app.delete('/sessions', verifyToken, async (req, res) => {
+app.delete('/sessions', authenticateToken, async (req, res) => {
     try {
         await sessions.remove(req.user.token);
         res.status(204).send();
@@ -94,23 +93,23 @@ app.delete('/sessions', verifyToken, async (req, res) => {
 });
 
 // Protected Routes - require authentication
-app.get('/forms', verifyToken, (req, res) => {
+app.get('/forms', authenticateToken, (req, res) => {
     res.status(200).json([]);
 });
 
-app.post('/forms', verifyToken, (req, res) => {
+app.post('/forms', authenticateToken, (req, res) => {
     res.status(201).json(req.body);
 });
 
-app.get('/forms/:formId', verifyToken, (req, res) => {
+app.get('/forms/:formId', authenticateToken, (req, res) => {
     res.status(200).json({ id: req.params.formId, title: "Sample Form" });
 });
 
-app.patch('/forms/:formId', verifyToken, (req, res) => {
+app.patch('/forms/:formId', authenticateToken, (req, res) => {
     res.status(200).json({ id: req.params.formId, ...req.body });
 });
 
-app.delete('/forms/:formId', verifyToken, (req, res) => {
+app.delete('/forms/:formId', authenticateToken, (req, res) => {
     res.status(204).send();
 });
 
