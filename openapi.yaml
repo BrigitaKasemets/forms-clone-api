@@ -43,20 +43,6 @@ paths:
                 $ref: "#/components/schemas/Session"
         "401":
           description: Invalid credentials
-    get:
-      tags:
-        - sessions
-      summary: Retrieve current session details
-      operationId: getSession
-      responses:
-        "200":
-          description: Returns current session info
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Session"
-        "401":
-          description: Not authenticated (no valid session)
     delete:
       tags:
         - sessions

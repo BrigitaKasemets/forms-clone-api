@@ -4,7 +4,12 @@ import yaml from 'yaml';
 import { readFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { authenticateToken, sessions } from './middleware/auth.js';
+import { authenticateToken } from './middleware/auth.js';
+import sessionsRouter from './routes/sessions.js';
+import formsRouter from './routes/forms.js';
+import questionsRouter from './routes/questions.js';
+import responsesRouter from './routes/responses.js';
+import usersRouter from './routes/users.js';
 import { userDb } from './db/db.js';
 
 // Määrame projekti juurkausta dünaamiliselt
@@ -29,6 +34,13 @@ app.use(express.json());
 // Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+// Routes
+app.use('/sessions', sessionsRouter);
+app.use('/forms', formsRouter);
+app.use('/forms', questionsRouter);
+app.use('/forms', responsesRouter);
+app.use('/users', usersRouter);
+
 // User Routes
 app.post('/users', async (req, res) => {
     try {
@@ -42,53 +54,6 @@ app.post('/users', async (req, res) => {
             console.error('User creation error:', error);
             res.status(500).json({ error: 'Internal server error' });
         }
-    }
-});
-
-// Authentication Routes
-app.post('/sessions', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const user = await userDb.verifyUser(email, password);
-        
-        if (!user) {
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
-
-        const session = await sessions.create(user.id);
-        res.status(201).json({
-            ...session,
-            user: {
-                id: user.id,
-                email: user.email,
-                name: user.name
-            }
-        });
-    } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-app.get('/sessions', authenticateToken, (req, res) => {
-    res.status(200).json({
-        token: req.user.token,
-        userId: req.user.id,
-        user: {
-            id: req.user.id,
-            email: req.user.email,
-            name: req.user.name
-        }
-    });
-});
-
-app.delete('/sessions', authenticateToken, async (req, res) => {
-    try {
-        await sessions.remove(req.user.token);
-        res.status(204).send();
-    } catch (error) {
-        console.error('Logout error:', error);
-        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
