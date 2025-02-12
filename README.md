@@ -2,14 +2,6 @@
 
 A RESTful API for managing forms and user sessions, built with Express.js. This API allows users to create, update, and manage forms with multiple question types and collect responses efficiently.
 
-## Features
-
-* **User Session Management:** Create, retrieve, and delete user sessions with JWT authentication
-* **Form Management:** Create, retrieve, update, and delete forms
-* **Question Management:** Add various types of questions to forms including short text, paragraph, multiple choice, checkbox, and dropdown
-* **Response Collection:** Gather and manage form responses
-* **Swagger Documentation:** Interactive API documentation available at `/api-docs`
-
 ## Getting Started
 
 ### Prerequisites
@@ -94,7 +86,3 @@ The API uses JWT (JSON Web Token) Bearer authentication. Include the token in th
 ```
 Authorization: Bearer <your_token>
 ```
-
-## License
-
-This project is licensed under the MIT License.
