@@ -38,38 +38,6 @@ The API is documented using Swagger. You can access the interactive documentatio
 
 http://localhost:3000/api-docs/
 
-## Endpoints
-
-### Sessions
-
-* `POST /sessions` - Create a new session (login)
-* `GET /sessions` - Retrieve current session
-* `DELETE /sessions` - Logout user
-
-### Forms
-
-* `GET /forms` - Retrieve all forms
-* `POST /forms` - Create a new form
-* `GET /forms/:formId` - Retrieve a specific form
-* `PATCH /forms/:formId` - Update a form
-* `DELETE /forms/:formId` - Delete a form
-
-### Questions
-
-* `GET /forms/:formId/questions` - List all questions for a form
-* `POST /forms/:formId/questions` - Create a new question
-* `GET /forms/:formId/questions/:questionId` - Get a specific question
-* `PATCH /forms/:formId/questions/:questionId` - Update a question
-* `DELETE /forms/:formId/questions/:questionId` - Delete a question
-
-### Responses
-
-* `GET /forms/:formId/responses` - List all responses for a form
-* `POST /forms/:formId/responses` - Submit a new response
-* `GET /forms/:formId/responses/:responseId` - Get a specific response
-* `PATCH /forms/:formId/responses/:responseId` - Update a response
-* `DELETE /forms/:formId/responses/:responseId` - Delete a response
-
 ## Question Types
 
 The API supports various question types:

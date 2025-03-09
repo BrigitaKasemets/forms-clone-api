@@ -78,7 +78,7 @@ app.delete('/forms/:formId', authenticateToken, (req, res) => {
     res.status(204).send();
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`📜 Swagger docs available at http://localhost:${PORT}/api-docs`);
