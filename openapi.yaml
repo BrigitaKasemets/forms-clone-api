@@ -53,6 +53,8 @@ paths:
           description: Session deleted (logged out)
         "401":
           description: Not authenticated
+      security:
+        - BearerAuth: [ ]
 
   /forms:
     get:
@@ -71,6 +73,9 @@ paths:
                   $ref: "#/components/schemas/Form"
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
+
     post:
       tags:
         - forms
@@ -91,6 +96,8 @@ paths:
                 $ref: "#/components/schemas/Form"
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
 
   /forms/{formId}:
     get:
@@ -115,6 +122,9 @@ paths:
           description: Form not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
+
     patch:
       tags:
         - forms
@@ -143,6 +153,9 @@ paths:
           description: Form not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
+
     delete:
       tags:
         - forms
@@ -161,6 +174,8 @@ paths:
           description: Form not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
 
   /forms/{formId}/questions:
     get:
@@ -187,6 +202,9 @@ paths:
           description: Form not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
+
     post:
       tags:
         - questions
@@ -215,6 +233,8 @@ paths:
           description: Form not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
 
   /forms/{formId}/questions/{questionId}:
     get:
@@ -244,6 +264,9 @@ paths:
           description: Question not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
+
     patch:
       tags:
         - questions
@@ -277,6 +300,9 @@ paths:
           description: Question not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
+
     delete:
       tags:
         - questions
@@ -300,6 +326,8 @@ paths:
           description: Question not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
 
   /forms/{formId}/responses:
     get:
@@ -326,6 +354,9 @@ paths:
           description: Form not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
+
     post:
       tags:
         - responses
@@ -354,6 +385,8 @@ paths:
           description: Form not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
 
   /forms/{formId}/responses/{responseId}:
     get:
@@ -383,6 +416,9 @@ paths:
           description: Response not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
+
     patch:
       tags:
         - responses
@@ -416,6 +452,9 @@ paths:
           description: Response not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
+
     delete:
       tags:
         - responses
@@ -439,6 +478,8 @@ paths:
           description: Response not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
 
   /users:
     get:
@@ -457,6 +498,9 @@ paths:
                   $ref: "#/components/schemas/User"
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
+
     post:
       tags:
         - users
@@ -477,6 +521,7 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           description: Invalid input (e.g., email already taken)
+
 
   /users/{userId}:
     get:
@@ -501,6 +546,8 @@ paths:
           description: User not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
     patch:
       tags:
         - users
@@ -529,6 +576,8 @@ paths:
           description: User not found
         "401":
           description: Unauthorized
+      security:
+        - BearerAuth: [ ]
     delete:
       tags:
         - users
@@ -547,7 +596,8 @@ paths:
           description: User not found
         "401":
           description: Unauthorized
-
+      security:
+      - BearerAuth: [ ]
 components:
   securitySchemes:
     BearerAuth:
@@ -786,6 +836,3 @@ components:
         - name
         - createdAt
         - updatedAt
-
-security:
-  - BearerAuth: []
