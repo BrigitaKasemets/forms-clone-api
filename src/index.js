@@ -59,8 +59,8 @@ app.get('/', (req, res) => {
     <body>
         <h1>Choose language / Vali keel</h1>
         <ul>
-            <li><a href="/docs/en">English</a></li>
-            <li><a href="/docs/et">Eesti keel</a></li>
+            <li><a href="/en">English</a></li>
+            <li><a href="/et">Eesti keel</a></li>
         </ul>
     </body>
     </html>
@@ -68,19 +68,19 @@ app.get('/', (req, res) => {
 });
 
 // Mitmekeelne Swagger UI konfiguratsioon
-app.use('/docs/en', swaggerUi.serve, swaggerUi.setup(swaggerDocumentEn, {
+app.use('/en', swaggerUi.serve, swaggerUi.setup(swaggerDocumentEn, {
     customCss: '.topbar { display: none }',
     customSiteTitle: "API Documentation",
 }));
 
-app.use('/docs/et', swaggerUi.serve, swaggerUi.setup(swaggerDocumentEt, {
+app.use('/et', swaggerUi.serve, swaggerUi.setup(swaggerDocumentEt, {
     customCss: '.topbar { display: none }',
     customSiteTitle: "API Dokumentatsioon",
 }));
 
 // Suuna ka /api-docs -> /docs/en (tagasiühilduvuse jaoks)
 app.get('/api-docs', (req, res) => {
-    res.redirect('/docs/en');
+    res.redirect('/en');
 });
 
 // Routes
@@ -131,7 +131,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`📜 Documentation available at:`);
-    console.log(`   - English: http://localhost:${PORT}/docs/en`);
-    console.log(`   - Estonian: http://localhost:${PORT}/docs/et`);
+    console.log(`   - English: http://localhost:${PORT}/en`);
+    console.log(`   - Estonian: http://localhost:${PORT}/et`);
     console.log(`   - Language selection: http://localhost:${PORT}/`);
 });
