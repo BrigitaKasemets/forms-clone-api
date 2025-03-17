@@ -12,33 +12,45 @@ import responsesRouter from './routes/responses.js';
 import usersRouter from './routes/users.js';
 import { userDb } from './db/db.js';
 
-// Määrame projekti juurkausta dünaamiliselt
+// Determine project root directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// OpenAPI failide asukohad
+// OpenAPI file paths
 const openApiPathEn = join(__dirname, '../openapi.en.yaml');
 const openApiPathEt = join(__dirname, '../openapi.et.yaml');
 
-// Loe mõlemad OpenAPI failid
+// Load OpenAPI files with separate error handling
 let swaggerDocumentEn, swaggerDocumentEt;
+
 try {
     const fileContentEn = await readFile(openApiPathEn, 'utf8');
     swaggerDocumentEn = yaml.parse(fileContentEn);
+    console.log('✅ English OpenAPI file loaded successfully');
+} catch (error) {
+    console.error('❌ Failed to load English OpenAPI file:', error);
+    swaggerDocumentEn = null;
+}
 
+try {
     const fileContentEt = await readFile(openApiPathEt, 'utf8');
     swaggerDocumentEt = yaml.parse(fileContentEt);
-
-    console.log('✅ OpenAPI files loaded successfully');
+    console.log('✅ Estonian OpenAPI file loaded successfully');
 } catch (error) {
-    console.error('❌ Failed to load OpenAPI files:', error);
-    process.exit(1); // Peatab rakenduse, kui fail puudub
+    console.error('❌ Failed to load Estonian OpenAPI file:', error);
+    swaggerDocumentEt = null;
+}
+
+// Verify at least one file loaded
+if (!swaggerDocumentEn && !swaggerDocumentEt) {
+    console.error('❌ Both OpenAPI files failed to load. Exiting.');
+    process.exit(1);
 }
 
 const app = express();
 app.use(express.json());
 
-// Avaleht keelevalikuga
+// Homepage with language selection
 app.get('/', (req, res) => {
     res.send(`
     <!DOCTYPE html>
@@ -51,7 +63,7 @@ app.get('/', (req, res) => {
             h1 { color: #333; }
             ul { list-style-type: none; padding: 0; }
             li { margin: 10px 0; }
-            a { display: inline-block; padding: 10px 15px; background-color: #f5f5f5; 
+            a { display: inline-block; padding: 10px 15px; background-color: #f5f5f5;
                 color: #333; text-decoration: none; border-radius: 4px; }
             a:hover { background-color: #e0e0e0; }
         </style>
@@ -67,18 +79,37 @@ app.get('/', (req, res) => {
     `);
 });
 
-// Mitmekeelne Swagger UI konfiguratsioon
-app.use('/en', swaggerUi.serve, swaggerUi.setup(swaggerDocumentEn, {
-    customCss: '.topbar { display: none }',
-    customSiteTitle: "API Documentation",
-}));
+// Setup English Swagger UI
+if (swaggerDocumentEn) {
+    // Set up English documentation on /en
+    const swaggerUiOptionsEn = {
+        customCss: '.topbar { display: none }',
+        customSiteTitle: "API Documentation - English",
+    };
+    app.use('/en', swaggerUi.serveFiles(swaggerDocumentEn, swaggerUiOptionsEn),
+        swaggerUi.setup(swaggerDocumentEn, swaggerUiOptionsEn));
+} else {
+    app.get('/en', (req, res) => {
+        res.status(503).send('English documentation unavailable');
+    });
+}
 
-app.use('/et', swaggerUi.serve, swaggerUi.setup(swaggerDocumentEt, {
-    customCss: '.topbar { display: none }',
-    customSiteTitle: "API Dokumentatsioon",
-}));
+// Setup Estonian Swagger UI
+if (swaggerDocumentEt) {
+    // Set up Estonian documentation on /et
+    const swaggerUiOptionsEt = {
+        customCss: '.topbar { display: none }',
+        customSiteTitle: "API Dokumentatsioon - Eesti",
+    };
+    app.use('/et', swaggerUi.serveFiles(swaggerDocumentEt, swaggerUiOptionsEt),
+        swaggerUi.setup(swaggerDocumentEt, swaggerUiOptionsEt));
+} else {
+    app.get('/et', (req, res) => {
+        res.status(503).send('Estonian documentation unavailable');
+    });
+}
 
-// Suuna ka /api-docs -> /docs/en (tagasiühilduvuse jaoks)
+// Redirect /api-docs to /en for backward compatibility
 app.get('/api-docs', (req, res) => {
     res.redirect('/en');
 });
@@ -131,7 +162,15 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`📜 Documentation available at:`);
-    console.log(`   - English: http://localhost:${PORT}/en`);
-    console.log(`   - Estonian: http://localhost:${PORT}/et`);
+    if (swaggerDocumentEn) {
+        console.log(`   - English: http://localhost:${PORT}/en`);
+    } else {
+        console.log(`   - English: Not available (file missing)`);
+    }
+    if (swaggerDocumentEt) {
+        console.log(`   - Estonian: http://localhost:${PORT}/et`);
+    } else {
+        console.log(`   - Estonian: Not available (file missing)`);
+    }
     console.log(`   - Language selection: http://localhost:${PORT}/`);
 });
