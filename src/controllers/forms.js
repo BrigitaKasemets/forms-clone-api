@@ -20,10 +20,6 @@ const validateForm = (req, res, next) => {
         errors.push({ field: 'description', message: 'Description is required' });
     }
 
-    if (!questions || !Array.isArray(questions) || questions.length === 0) {
-        errors.push({ field: 'questions', message: 'At least one question is required' });
-    }
-
     // Kui on vigu, siis tagastame need vastuses
     if (errors.length > 0) {
         return res.status(400).json({
