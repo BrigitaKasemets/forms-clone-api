@@ -6,7 +6,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { authenticateToken } from './middleware/auth.js';
 import sessionsRouter from './routes/sessions.js';
-import formsRouter from './routes/forms.js';
+import { formsRouter } from './controllers/forms.js';
 import questionsRouter from './routes/questions.js';
 import responsesRouter from './routes/responses.js';
 import usersRouter from './routes/users.js';
@@ -117,8 +117,8 @@ app.get('/api-docs', (req, res) => {
 // Routes
 app.use('/sessions', sessionsRouter);
 app.use('/forms', formsRouter);
-app.use('/forms', questionsRouter);
-app.use('/forms', responsesRouter);
+app.use('/forms/:formId/questions', questionsRouter);
+app.use('/forms/:formId/responses', responsesRouter);
 app.use('/users', usersRouter);
 
 // User Routes
@@ -135,27 +135,6 @@ app.post('/users', async (req, res) => {
             res.status(500).json({ error: 'Internal server error' });
         }
     }
-});
-
-// Protected Routes - require authentication
-app.get('/forms', authenticateToken, (req, res) => {
-    res.status(200).json([]);
-});
-
-app.post('/forms', authenticateToken, (req, res) => {
-    res.status(201).json(req.body);
-});
-
-app.get('/forms/:formId', authenticateToken, (req, res) => {
-    res.status(200).json({ id: req.params.formId, title: "Sample Form" });
-});
-
-app.patch('/forms/:formId', authenticateToken, (req, res) => {
-    res.status(200).json({ id: req.params.formId, ...req.body });
-});
-
-app.delete('/forms/:formId', authenticateToken, (req, res) => {
-    res.status(204).send();
 });
 
 const PORT = process.env.PORT || 3000;
