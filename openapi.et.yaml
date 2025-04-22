@@ -41,8 +41,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Session"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "401":
           description: Vigased sisselogimisandmed
+        "500":
+          $ref: "#/components/responses/ServerError"
     delete:
       tags:
         - sessions
@@ -53,6 +57,10 @@ paths:
           description: Seanss on kustutatud (välja logitud)
         "401":
           description: Pole autenditud
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -73,6 +81,10 @@ paths:
                   $ref: "#/components/schemas/Form"
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -96,6 +108,10 @@ paths:
                 $ref: "#/components/schemas/Form"
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -122,6 +138,10 @@ paths:
           description: Vormi ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -153,6 +173,10 @@ paths:
           description: Vormi ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -174,6 +198,10 @@ paths:
           description: Vormi ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -202,6 +230,10 @@ paths:
           description: Vormi ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -233,6 +265,10 @@ paths:
           description: Vormi ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -264,6 +300,10 @@ paths:
           description: Küsimust ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -300,6 +340,10 @@ paths:
           description: Küsimust ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -326,6 +370,10 @@ paths:
           description: Küsimust ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -354,6 +402,10 @@ paths:
           description: Vormi ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -385,6 +437,10 @@ paths:
           description: Vormi ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -416,6 +472,10 @@ paths:
           description: Vastust ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -452,6 +512,10 @@ paths:
           description: Vastust ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -478,6 +542,10 @@ paths:
           description: Vastust ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -498,6 +566,10 @@ paths:
                   $ref: "#/components/schemas/User"
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 
@@ -520,7 +592,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
         "400":
-          description: Vigane sisend (nt e-post on juba kasutusel)
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
 
 
   /users/{userId}:
@@ -546,6 +620,10 @@ paths:
           description: Kasutajat ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
     patch:
@@ -576,6 +654,10 @@ paths:
           description: Kasutajat ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
     delete:
@@ -596,6 +678,10 @@ paths:
           description: Kasutajat ei leitud
         "401":
           description: Autoriseerimata
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
       security:
         - BearerAuth: [ ]
 components:
@@ -605,7 +691,32 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
+  responses:
+    BadRequest:
+      description: Vigane päring - vigased sisendparameetrid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    ServerError:
+      description: Serveri sisemine viga
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
   schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - message
+
     SessionCreate:
       type: object
       properties:

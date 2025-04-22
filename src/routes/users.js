@@ -5,8 +5,14 @@ import { userDb } from '../db/db.js';
 const router = express.Router();
 
 // Get all users
-router.get('/', authenticateToken, (req, res) => {
-    res.status(200).json([]);
+router.get('/', authenticateToken, async (req, res) => {
+    try {
+        const users = await userDb.getAllUsers();
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 // Register new user
@@ -26,14 +32,18 @@ router.post('/', async (req, res) => {
 });
 
 // Get user by ID
-router.get('/:userId', authenticateToken, (req, res) => {
-    res.status(200).json({
-        id: req.params.userId,
-        email: "user@example.com",
-        name: "Sample User",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    });
+router.get('/:userId', authenticateToken, async (req, res) => {
+    try {
+        const user = await userDb.getUserById(req.params.userId);
+        res.status(200).json(user);
+    } catch (error) {
+        if (error.message === 'User not found') {
+            res.status(404).json({ error: 'User not found' });
+        } else {
+            console.error('Error fetching user:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
 });
 
 // Update user

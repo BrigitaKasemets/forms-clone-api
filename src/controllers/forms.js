@@ -38,9 +38,15 @@ export class FormsController {
     // Loo uus vorm
     static async createForm(req, res) {
         try {
-            const form = await FormModel.create(req.body); // Salvestame vormi andmed
+            // Add the user_id from the authenticated request
+            const formData = {
+                ...req.body,
+                user_id: req.user.id
+            };
+            const form = await FormModel.create(formData); // Salvestame vormi andmed
             res.status(201).json(form); // Tagastame loodud vormi
         } catch (error) {
+            console.error('Form creation error:', error);
             res.status(500).json({ code: 500, message: 'Internal server error', details: [{ message: error.message }] });
         }
     }
@@ -53,6 +59,7 @@ export class FormsController {
             const forms = await FormModel.findAll(page, limit); // Võtame vormid
             res.json(forms); // Tagastame kõik vormid
         } catch (error) {
+            console.error('Error fetching forms:', error);
             res.status(500).json({ code: 500, message: 'Internal server error', details: [{ message: error.message }] });
         }
     }
@@ -66,6 +73,7 @@ export class FormsController {
             }
             res.json(form); // Tagastame leitud vormi
         } catch (error) {
+            console.error('Error fetching form by ID:', error);
             res.status(500).json({ code: 500, message: 'Internal server error', details: [{ message: error.message }] });
         }
     }
@@ -73,12 +81,18 @@ export class FormsController {
     // Uuenda vormi vastavalt ID-le
     static async updateForm(req, res) {
         try {
-            const form = await FormModel.update(req.params.id, req.body); // Uuendame vormi
+            // Add the user_id from the authenticated request
+            const formData = {
+                ...req.body,
+                user_id: req.user.id
+            };
+            const form = await FormModel.update(req.params.id, formData); // Uuendame vormi
             if (!form) {
                 return res.status(404).json({ code: 404, message: 'Form not found', details: [{ message: `Form with ID ${req.params.id} does not exist` }] });
             }
             res.json(form); // Tagastame uuendatud vormi
         } catch (error) {
+            console.error('Error updating form:', error);
             res.status(500).json({ code: 500, message: 'Internal server error', details: [{ message: error.message }] });
         }
     }
@@ -92,6 +106,7 @@ export class FormsController {
             }
             res.status(204).send(); // Tagastame tühja vastuse, kuna vorm on kustutatud
         } catch (error) {
+            console.error('Error deleting form:', error);
             res.status(500).json({ code: 500, message: 'Internal server error', details: [{ message: error.message }] });
         }
     }
@@ -101,7 +116,7 @@ export class FormsController {
 router.post('/', authenticateToken, validateForm, FormsController.createForm);  // Loo vorm
 router.get('/', authenticateToken, FormsController.getForms);  // Kõik vormid
 router.get('/:id', authenticateToken, FormsController.getFormById);  // Vorm ID järgi
-router.put('/:id', authenticateToken, validateForm, FormsController.updateForm);  // Uuenda vormi
+router.patch('/:id', authenticateToken, validateForm, FormsController.updateForm);  // Uuenda vormi
 router.delete('/:id', authenticateToken, FormsController.deleteForm);  // Kustuta vorm
 
 // Ekspordi router
