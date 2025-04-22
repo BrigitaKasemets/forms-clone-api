@@ -23,22 +23,10 @@ export const FormModel = {
         };
     },
 
-    findAll: async (page = 1, limit = 10) => {
+    findAll: async () => {
         try {
             const forms = await formDb.getAllForms();
-            
-            const startIndex = (page - 1) * limit;
-            const endIndex = startIndex + limit;
-            const paginatedForms = forms.slice(startIndex, endIndex);
-
-            return {
-                data: paginatedForms,
-                pagination: {
-                    total: forms.length,
-                    page,
-                    pages: Math.ceil(forms.length / limit)
-                }
-            };
+            return forms; // Add this return statement
         } catch (error) {
             console.error('Error fetching forms:', error);
             throw error;
@@ -79,5 +67,5 @@ export const FormModel = {
             console.error('Error deleting form:', error);
             return false;
         }
-    }
+    }    
 };
