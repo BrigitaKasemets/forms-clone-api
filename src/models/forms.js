@@ -1,57 +1,83 @@
-import { v4 as uuidv4 } from 'uuid';
-
-// Temporary storage (replace with database in production)
-let forms = [];
+import { formDb } from '../db/db.js';
 
 export const FormModel = {
     create: async (formData) => {
-        const form = {
-            id: uuidv4(),
-            ...formData,
+        // Make sure user_id is available in the formData
+        if (!formData.user_id) {
+            throw new Error('User ID is required to create a form');
+        }
+
+        const form = await formDb.createForm(
+            formData.user_id,
+            formData.title, 
+            formData.description
+        );
+        
+        return {
+            id: form.id,
+            title: form.title,
+            description: form.description,
+            user_id: form.userId,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
         };
-        forms.push(form);
-        return form;
     },
 
     findAll: async (page = 1, limit = 10) => {
-        const startIndex = (page - 1) * limit;
-        const endIndex = startIndex + limit;
-        const paginatedForms = forms.slice(startIndex, endIndex);
+        try {
+            const forms = await formDb.getAllForms();
+            
+            const startIndex = (page - 1) * limit;
+            const endIndex = startIndex + limit;
+            const paginatedForms = forms.slice(startIndex, endIndex);
 
-        return {
-            data: paginatedForms,
-            pagination: {
-                total: forms.length,
-                page,
-                pages: Math.ceil(forms.length / limit)
-            }
-        };
+            return {
+                data: paginatedForms,
+                pagination: {
+                    total: forms.length,
+                    page,
+                    pages: Math.ceil(forms.length / limit)
+                }
+            };
+        } catch (error) {
+            console.error('Error fetching forms:', error);
+            throw error;
+        }
     },
 
     findById: async (id) => {
-        return forms.find(f => f.id === id);
+        try {
+            return await formDb.getFormById(id);
+        } catch (error) {
+            if (error.message === 'Form not found') {
+                return null;
+            }
+            throw error;
+        }
     },
 
     update: async (id, formData) => {
-        const index = forms.findIndex(f => f.id === id);
-        if (index === -1) return null;
-
-        forms[index] = {
-            ...forms[index],
-            ...formData,
-            updated_at: new Date().toISOString()
-        };
-
-        return forms[index];
+        try {
+            const updatedForm = await formDb.updateForm(
+                id, 
+                formData.title, 
+                formData.description
+            );
+            return updatedForm;
+        } catch (error) {
+            if (error.message === 'Form not found') {
+                return null;
+            }
+            throw error;
+        }
     },
 
     delete: async (id) => {
-        const index = forms.findIndex(f => f.id === id);
-        if (index === -1) return false;
-
-        forms = forms.filter(f => f.id !== id);
-        return true;
+        try {
+            return await formDb.deleteForm(id);
+        } catch (error) {
+            console.error('Error deleting form:', error);
+            return false;
+        }
     }
-}; 
+};

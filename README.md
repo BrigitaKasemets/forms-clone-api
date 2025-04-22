@@ -24,6 +24,18 @@ Install dependencies:
 npm install
 ```
 
+### Initialize the database
+
+Before starting the server, initialize the database by running:
+
+```sh
+npm run init-db
+```
+
+This will create the necessary database tables and set up a test admin user:
+- Email: admin@example.com
+- Password: password123
+
 ### Start the server
 
 ```sh
