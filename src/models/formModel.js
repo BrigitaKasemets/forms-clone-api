@@ -27,6 +27,11 @@ export const FormModel = {
         try {
             const forms = await formDb.getAllForms();
             
+            // Check if there are no forms
+            if (!forms || forms.length === 0) {
+                throw new Error('No forms found');
+            }
+            
             const startIndex = (page - 1) * limit;
             const endIndex = startIndex + limit;
             const paginatedForms = forms.slice(startIndex, endIndex);
