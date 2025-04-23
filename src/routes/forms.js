@@ -13,10 +13,6 @@ const validateForm = (req, res, next) => {
         errors.push({ field: 'title', message: 'Title is required' });
     }
 
-    if (!description) {
-        errors.push({ field: 'description', message: 'Description is required' });
-    }
-
     if (errors.length > 0) {
         return res.status(400).json({
             code: 400,
@@ -31,9 +27,16 @@ const validateForm = (req, res, next) => {
 // Create a new form
 router.post('/', authenticateToken, validateForm, async (req, res) => {
     try {
-        const form = await FormModel.create(req.body);
+        // Add the user_id from the authenticated request
+        const formData = {
+            ...req.body,
+            user_id: req.user.id
+        };
+        
+        const form = await FormModel.create(formData);
         res.status(201).json(form);
     } catch (error) {
+        console.error('Error creating form:', error);
         res.status(500).json({ 
             code: 500, 
             message: 'Internal server error', 
@@ -50,6 +53,16 @@ router.get('/', authenticateToken, async (req, res) => {
         const forms = await FormModel.findAll(page, limit);
         res.status(200).json(forms);
     } catch (error) {
+        // If no forms are found, return a 404 with an informative message
+        if (error.message === 'No forms found') {
+            return res.status(404).json({ 
+                code: 404, 
+                message: 'No forms found', 
+                details: [{ message: 'There are no forms available in the database.' }] 
+            });
+        }
+        
+        console.error('Error fetching forms:', error);
         res.status(500).json({ 
             code: 500, 
             message: 'Internal server error', 
@@ -71,6 +84,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
         }
         res.status(200).json(form);
     } catch (error) {
+        console.error('Error fetching form:', error);
         res.status(500).json({ 
             code: 500, 
             message: 'Internal server error', 
@@ -82,7 +96,13 @@ router.get('/:id', authenticateToken, async (req, res) => {
 // Update an existing form
 router.patch('/:id', authenticateToken, validateForm, async (req, res) => {
     try {
-        const form = await FormModel.update(req.params.id, req.body);
+        // Add the user_id from the authenticated request
+        const formData = {
+            ...req.body,
+            user_id: req.user.id
+        };
+        
+        const form = await FormModel.update(req.params.id, formData);
         if (!form) {
             return res.status(404).json({ 
                 code: 404, 
@@ -92,6 +112,7 @@ router.patch('/:id', authenticateToken, validateForm, async (req, res) => {
         }
         res.status(200).json(form);
     } catch (error) {
+        console.error('Error updating form:', error);
         res.status(500).json({ 
             code: 500, 
             message: 'Internal server error', 
@@ -113,6 +134,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
         }
         res.status(204).send();
     } catch (error) {
+        console.error('Error deleting form:', error);
         res.status(500).json({ 
             code: 500, 
             message: 'Internal server error', 

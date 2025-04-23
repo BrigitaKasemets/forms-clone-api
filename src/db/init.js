@@ -80,10 +80,12 @@ const initDb = async () => {
         respondent_name TEXT,
         respondent_email TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (form_id) REFERENCES forms (id) ON DELETE CASCADE
       )
     `);
     console.log('Responses table created');
+    
 
     // Create answer_values table for storing individual question answers
     await db.exec(`
