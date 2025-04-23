@@ -1,7 +1,7 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authenticateToken } from '../middleware/auth.js';
-import { FormModel } from '../models/forms.js';
+import { FormModel } from '../models/formModel.js';
 
 // Loome express routeri, et defineerida teed
 export const router = express.Router();
