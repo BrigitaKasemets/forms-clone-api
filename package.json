@@ -2,11 +2,11 @@
   "name": "forms",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "formsClone.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "start": "node src/formsClone.js",
+    "dev": "nodemon src/formsClone.js",
     "init-db": "node src/db/init.js"
   },
   "repository": {

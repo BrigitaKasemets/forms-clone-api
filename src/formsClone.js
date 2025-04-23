@@ -9,8 +9,8 @@ import sessionsRouter from './routes/sessions.js';
 import formsRouter from './routes/forms.js';
 import questionsRouter from './routes/questions.js';
 import responsesRouter from './routes/responses.js';
-import usersRouter from './routes/users.js';
 import { userDb } from './db/db.js';
+import usersRouter from './routes/users.js';
 
 // Determine project root directory
 const __filename = fileURLToPath(import.meta.url);
