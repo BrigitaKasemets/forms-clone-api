@@ -1,6 +1,6 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/auth.js';
-import { FormModel } from '../models/forms.js';
+import { FormModel } from '../models/formModel.js';
 
 const router = express.Router();
 

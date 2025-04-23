@@ -596,7 +596,6 @@ paths:
         "500":
           $ref: "#/components/responses/ServerError"
 
-
   /users/{userId}:
     get:
       tags:
