@@ -599,10 +599,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        "400":
+          description: Päringus on puudu vajalikud väljad
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Päringus on puudu vajalikud väljad: email, parool ja nimi on nõutud"
         "409":
             description: Selle emailiga kasutaja on juba olemas
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
 

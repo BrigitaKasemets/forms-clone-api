@@ -600,9 +600,25 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
         "400":
-          $ref: "#/components/responses/BadRequest"
+          description: Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Missing required fields: email, password, and name are required"
         "409":
           description: User already exists with this email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Email already exists"
         "500":
           $ref: "#/components/responses/ServerError"
 
