@@ -19,11 +19,19 @@ router.get('/', authenticateToken, async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const { email, password, name } = req.body;
+
+        // Validate required fields
+        if (!email || !password || !name) {
+            return res.status(400).json({
+                message: 'Missing required fields: email, password, and name are required'
+            });
+        }
+
         const user = await userDb.createUser(email, password, name);
         res.status(201).json(user);
     } catch (error) {
         if (error.message === 'Email already exists') {
-            res.status(400).json({ error: error.message });
+            res.status(409).json({ error: error.message });
         } else {
             console.error('User creation error:', error);
             res.status(500).json({ error: 'Internal server error' });

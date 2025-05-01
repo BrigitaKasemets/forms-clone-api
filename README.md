@@ -35,7 +35,7 @@ npm run init-db
 This will create the necessary database tables and set up a test admin user:
 - Email: admin@example.com
 - Password: password123
-
+np
 ### Start the server
 
 ```sh
@@ -49,15 +49,6 @@ Access the API at http://localhost:3000
 The API is documented using Swagger. You can access the interactive documentation at:
 
 http://localhost:3000/api-docs/
-
-## Question Types
-
-The API supports various question types:
-- Short text
-- Paragraph
-- Multiple choice
-- Checkbox
-- Dropdown
 
 ## Authentication
 
