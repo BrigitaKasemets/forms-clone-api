@@ -9,8 +9,16 @@ const router = express.Router();
 router.post('/', async (req, res) => {
     try {
         const { email, password } = req.body;
+
+        // Validate required fields
+        if (!email || !password) {
+            return res.status(400).json({
+                message: 'Missing required fields: email and password are required'
+            });
+        }
+
         const user = await userDb.verifyUser(email, password);
-        
+
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
@@ -30,7 +38,7 @@ router.post('/', async (req, res) => {
 router.delete('/', authenticateToken, async (req, res) => {
     try {
         await sessions.remove(req.user.token);
-        res.status(204).send();
+        res.status(200).json({ message: 'Logged out!' });
     } catch (error) {
         console.error('Logout error:', error);
         res.status(500).json({ error: 'Internal server error' });

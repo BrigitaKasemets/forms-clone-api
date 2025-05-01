@@ -53,8 +53,16 @@ paths:
       summary: End current session (logout)
       operationId: deleteSession
       responses:
-        "204":
-          description: Session deleted (logged out)
+        "200":
+          description: Session ended successfully (logged out)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logged out!"
         "401":
           description: Not authenticated
         "400":
@@ -593,6 +601,8 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "409":
+          description: User already exists with this email
         "500":
           $ref: "#/components/responses/ServerError"
 

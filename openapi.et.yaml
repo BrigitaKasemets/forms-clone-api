@@ -53,10 +53,18 @@ paths:
       summary: Lõpeta praegune seanss (väljalogimine)
       operationId: deleteSession
       responses:
-        "204":
+        "200":
           description: Seanss on kustutatud (välja logitud)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Olete välja logitud"
         "401":
-          description: Pole autenditud
+          description: Pole autentitud
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -591,6 +599,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        "409":
+            description: Selle emailiga kasutaja on juba olemas
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
