@@ -16,6 +16,7 @@ router.get('/', authenticateToken, async (req, res) => {
 });
 
 // Register new user
+// Register new user
 router.post('/', async (req, res) => {
     try {
         const { email, password, name } = req.body;
@@ -28,7 +29,15 @@ router.post('/', async (req, res) => {
         }
 
         const user = await userDb.createUser(email, password, name);
-        res.status(201).json(user);
+
+        // Add timestamp fields if they don't exist
+        const responseUser = {
+            ...user,
+            createdAt: user.createdAt || new Date().toISOString(),
+            updatedAt: user.updatedAt || new Date().toISOString()
+        };
+
+        res.status(201).json(responseUser);
     } catch (error) {
         if (error.message === 'Email already exists') {
             res.status(409).json({ error: error.message });
