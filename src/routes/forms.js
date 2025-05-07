@@ -13,6 +13,14 @@ const validateForm = (req, res, next) => {
         errors.push({ field: 'title', message: 'Title is required' });
     }
 
+    // Description is optional, but if provided, validate it
+    if (description !== undefined) {
+        if (description.length > 500) {
+            errors.push({ field: 'description', message: 'Description cannot exceed 500 characters' });
+        }
+        // You can add more description validations here if needed
+    }
+
     if (errors.length > 0) {
         return res.status(400).json({
             code: 400,
@@ -45,28 +53,26 @@ router.post('/', authenticateToken, validateForm, async (req, res) => {
     }
 });
 
-// Get all forms with pagination
+// Get all forms
 router.get('/', authenticateToken, async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const forms = await FormModel.findAll(page, limit);
+        const forms = await FormModel.findAll();
         res.status(200).json(forms);
     } catch (error) {
         // If no forms are found, return a 404 with an informative message
         if (error.message === 'No forms found') {
-            return res.status(404).json({ 
-                code: 404, 
-                message: 'No forms found', 
-                details: [{ message: 'There are no forms available in the database.' }] 
+            return res.status(404).json({
+                code: 404,
+                message: 'No forms found',
+                details: [{ message: 'There are no forms available in the database.' }]
             });
         }
-        
+
         console.error('Error fetching forms:', error);
-        res.status(500).json({ 
-            code: 500, 
-            message: 'Internal server error', 
-            details: [{ message: error.message }] 
+        res.status(500).json({
+            code: 500,
+            message: 'Internal server error',
+            details: [{ message: error.message }]
         });
     }
 });
