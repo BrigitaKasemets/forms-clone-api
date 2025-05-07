@@ -23,32 +23,24 @@ export const FormModel = {
         };
     },
 
-    findAll: async (page = 1, limit = 10) => {
+    findAll: async () => {
         try {
             const forms = await formDb.getAllForms();
-            
-            // Check if there are no forms
-            if (!forms || forms.length === 0) {
-                throw new Error('No forms found');
-            }
-            
-            const startIndex = (page - 1) * limit;
-            const endIndex = startIndex + limit;
-            const paginatedForms = forms.slice(startIndex, endIndex);
 
-            return {
-                data: paginatedForms,
-                pagination: {
-                    total: forms.length,
-                    page,
-                    pages: Math.ceil(forms.length / limit)
-                }
-            };
+            if (!forms || forms.length === 0) {
+                // Log and return an empty array or handle appropriately
+                console.warn('No forms found');
+                return [];
+            }
+
+            return forms;
+
         } catch (error) {
             console.error('Error fetching forms:', error);
-            throw error;
+            throw error; // this is still meaningful if error originates from getAllForms
         }
     },
+
 
     findById: async (id) => {
         try {
@@ -63,12 +55,11 @@ export const FormModel = {
 
     update: async (id, formData) => {
         try {
-            const updatedForm = await formDb.updateForm(
-                id, 
-                formData.title, 
+            return await formDb.updateForm(
+                id,
+                formData.title,
                 formData.description
             );
-            return updatedForm;
         } catch (error) {
             if (error.message === 'Form not found') {
                 return null;
