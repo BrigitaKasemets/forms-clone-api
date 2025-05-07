@@ -21,7 +21,7 @@ const initDb = async () => {
     // Create users table
     await db.exec(`
       CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY,
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
         name TEXT NOT NULL,
@@ -45,7 +45,7 @@ const initDb = async () => {
     // Create forms table
     await db.exec(`
       CREATE TABLE IF NOT EXISTS forms (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY,
         user_id INTEGER NOT NULL,
         title TEXT NOT NULL,
         description TEXT NOT NULL,
@@ -59,7 +59,7 @@ const initDb = async () => {
     // Create questions table if not already defined in the schema
     await db.exec(`
       CREATE TABLE IF NOT EXISTS questions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY,
         form_id INTEGER NOT NULL,
         question_text TEXT NOT NULL,
         question_type TEXT NOT NULL,
@@ -75,7 +75,7 @@ const initDb = async () => {
     // Create responses table if not already defined in the schema
     await db.exec(`
       CREATE TABLE IF NOT EXISTS responses (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY,
         form_id INTEGER NOT NULL,
         respondent_name TEXT,
         respondent_email TEXT,
@@ -90,7 +90,7 @@ const initDb = async () => {
     // Create answer_values table for storing individual question answers
     await db.exec(`
       CREATE TABLE IF NOT EXISTS answer_values (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY,
         response_id INTEGER NOT NULL,
         question_id INTEGER NOT NULL,
         answer_text TEXT,
