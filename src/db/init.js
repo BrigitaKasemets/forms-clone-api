@@ -25,8 +25,8 @@ const initDb = async () => {
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
         name TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
     console.log('Users table created');
@@ -35,9 +35,9 @@ const initDb = async () => {
     await db.exec(`
       CREATE TABLE IF NOT EXISTS sessions (
         token TEXT PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users (id)
+        userId INTEGER NOT NULL,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (userId) REFERENCES users (id)
       )
     `);
     console.log('Sessions table created');
@@ -46,12 +46,12 @@ const initDb = async () => {
     await db.exec(`
       CREATE TABLE IF NOT EXISTS forms (
         id INTEGER PRIMARY KEY,
-        user_id INTEGER NOT NULL,
+        userId INTEGER NOT NULL,
         title TEXT NOT NULL,
         description TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users (id)
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (userId) REFERENCES users (id)
       )
     `);
     console.log('Forms table created');
@@ -60,14 +60,14 @@ const initDb = async () => {
     await db.exec(`
       CREATE TABLE IF NOT EXISTS questions (
         id INTEGER PRIMARY KEY,
-        form_id INTEGER NOT NULL,
-        question_text TEXT NOT NULL,
-        question_type TEXT NOT NULL,
+        formId INTEGER NOT NULL,
+        questionText TEXT NOT NULL,
+        questionType TEXT NOT NULL,
         required BOOLEAN DEFAULT FALSE,
         options TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (form_id) REFERENCES forms (id) ON DELETE CASCADE
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (formId) REFERENCES forms (id) ON DELETE CASCADE
       )
     `);
     console.log('Questions table created');
@@ -76,12 +76,12 @@ const initDb = async () => {
     await db.exec(`
       CREATE TABLE IF NOT EXISTS responses (
         id INTEGER PRIMARY KEY,
-        form_id INTEGER NOT NULL,
-        respondent_name TEXT,
-        respondent_email TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (form_id) REFERENCES forms (id) ON DELETE CASCADE
+        formId INTEGER NOT NULL,
+        respondentName TEXT,
+        respondentEmail TEXT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (formId) REFERENCES forms (id) ON DELETE CASCADE
       )
     `);
     console.log('Responses table created');
@@ -91,12 +91,12 @@ const initDb = async () => {
     await db.exec(`
       CREATE TABLE IF NOT EXISTS answer_values (
         id INTEGER PRIMARY KEY,
-        response_id INTEGER NOT NULL,
-        question_id INTEGER NOT NULL,
-        answer_text TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (response_id) REFERENCES responses (id) ON DELETE CASCADE,
-        FOREIGN KEY (question_id) REFERENCES questions (id) ON DELETE CASCADE
+        responseId INTEGER NOT NULL,
+        questionId INTEGER NOT NULL,
+        answerText TEXT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (responseId) REFERENCES responses (id) ON DELETE CASCADE,
+        FOREIGN KEY (questionId) REFERENCES questions (id) ON DELETE CASCADE
       )
     `);
     console.log('Answer values table created');

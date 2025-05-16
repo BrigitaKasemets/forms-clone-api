@@ -2,7 +2,7 @@
   "name": "forms",
   "version": "1.0.0",
   "description": "",
-  "main": "formsClone.js",
+  "main": "src/formsClone.js",
   "type": "module",
   "scripts": {
     "start": "node src/formsClone.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BrigitaKasemets/Forms.git"
+    "url": "git+https://github.com/BrigitaKasemets/forms-clone-api.git"
   },
   "keywords": [],
   "author": "",

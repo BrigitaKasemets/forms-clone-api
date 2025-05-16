@@ -35,10 +35,10 @@ const validateForm = (req, res, next) => {
 // Create a new form
 router.post('/', authenticateToken, validateForm, async (req, res) => {
     try {
-        // Add the user_id from the authenticated request
+        // Add the userId from the authenticated request
         const formData = {
             ...req.body,
-            user_id: req.user.id
+            userId: req.user.id
         };
         
         const form = await FormModel.create(formData);
@@ -102,10 +102,10 @@ router.get('/:id', authenticateToken, async (req, res) => {
 // Update an existing form
 router.patch('/:id', authenticateToken, validateForm, async (req, res) => {
     try {
-        // Add the user_id from the authenticated request
+        // Add the userId from the authenticated request
         const formData = {
             ...req.body,
-            user_id: req.user.id
+            userId: req.user.id
         };
         
         const form = await FormModel.update(req.params.id, formData);

@@ -2,13 +2,13 @@ import { formDb } from '../db/db.js';
 
 export const FormModel = {
     create: async (formData) => {
-        // Make sure user_id is available in the formData
-        if (!formData.user_id) {
+        // Make sure userId is available in the formData
+        if (!formData.userId) {
             throw new Error('User ID is required to create a form');
         }
 
         const form = await formDb.createForm(
-            formData.user_id,
+            formData.userId,
             formData.title, 
             formData.description
         );
@@ -17,9 +17,9 @@ export const FormModel = {
             id: form.id,
             title: form.title,
             description: form.description,
-            user_id: form.userId,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            userId: form.userId,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
         };
     },
 

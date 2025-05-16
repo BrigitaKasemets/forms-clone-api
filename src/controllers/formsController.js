@@ -38,10 +38,10 @@ export class FormsController {
     // Create a new form
     static async createForm(req, res) {
         try {
-            // Add the user_id from the authenticated request
+            // Add the userId from the authenticated request
             const formData = {
                 ...req.body,
-                user_id: req.user.id
+                userId: req.user.id
             };
             const form = await FormModel.create(formData);
             res.status(201).json(form);
@@ -58,7 +58,7 @@ export class FormsController {
             const forms = await FormModel.findAll();
             
             // Check if forms exists before filtering
-            const userForms = forms ? forms.filter(form => form.user_id === req.user.id) : [];
+            const userForms = forms ? forms.filter(form => form.userId === req.user.id) : [];
             
             return res.json({
                 data: userForms
@@ -92,7 +92,7 @@ export class FormsController {
         try {
             const formData = {
                 ...req.body,
-                user_id: req.user.id
+                userId: req.user.id
             };
             const form = await FormModel.update(req.params.id, formData);
             if (!form) {

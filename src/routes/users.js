@@ -16,7 +16,6 @@ router.get('/', authenticateToken, async (req, res) => {
 });
 
 // Register new user
-// Register new user
 router.post('/', async (req, res) => {
     try {
         const { email, password, name } = req.body;

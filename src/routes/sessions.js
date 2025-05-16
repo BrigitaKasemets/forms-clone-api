@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        const session = await sessions.create(user.id);
+        const session = await sessions.create(user.id, user.email, user.name);
         res.status(201).json({
             token: session.token,
             userId: user.id

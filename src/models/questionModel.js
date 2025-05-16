@@ -1,20 +1,9 @@
 // models/questions.js
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
-
-// Function to get database connection
-const getDb = async () => {
-  return await open({
-    filename: 'forms.db',
-    driver: sqlite3.Database
-  });
-};
+import { withDb } from '../db/db.js';
 
 export const QuestionModel = {
   create: async (formId, questionData) => {
-    const db = await getDb();
-    
-    try {
+    return withDb(async (db) => {
       // First check if the form exists
       const formExists = await db.get('SELECT id FROM forms WHERE id = ?', [formId]);
       if (!formExists) {
@@ -26,7 +15,7 @@ export const QuestionModel = {
       
       const result = await db.run(
         `INSERT INTO questions 
-        (form_id, question_text, question_type, required, options) 
+        (formId, questionText, questionType, required, options) 
         VALUES (?, ?, ?, ?, ?)`,
         [
           formId, 
@@ -46,22 +35,18 @@ export const QuestionModel = {
       // Parse options back to array if it exists
       return {
         id: question.id,
-        text: question.question_text,
-        type: question.question_type,
+        text: question.questionText,
+        type: question.questionType,
         required: Boolean(question.required),
         options: question.options ? JSON.parse(question.options) : [],
-        createdAt: question.created_at,
-        updatedAt: question.updated_at
+        createdAt: question.createdAt,
+        updatedAt: question.updatedAt
       };
-    } finally {
-      await db.close();
-    }
+    });
   },
   
   findAll: async (formId) => {
-    const db = await getDb();
-    
-    try {
+    return withDb(async (db) => {
       // First check if the form exists
       const formExists = await db.get('SELECT id FROM forms WHERE id = ?', [formId]);
       if (!formExists) {
@@ -69,31 +54,27 @@ export const QuestionModel = {
       }
       
       const questions = await db.all(
-        'SELECT * FROM questions WHERE form_id = ? ORDER BY id',
+        'SELECT * FROM questions WHERE formId = ? ORDER BY id',
         [formId]
       );
       
       // Format the response
       return questions.map(q => ({
         id: q.id,
-        text: q.question_text,
-        type: q.question_type,
+        text: q.questionText,
+        type: q.questionType,
         required: Boolean(q.required),
         options: q.options ? JSON.parse(q.options) : [],
-        createdAt: q.created_at,
-        updatedAt: q.updated_at
+        createdAt: q.createdAt,
+        updatedAt: q.updatedAt
       }));
-    } finally {
-      await db.close();
-    }
+    });
   },
   
   findById: async (formId, questionId) => {
-    const db = await getDb();
-    
-    try {
+    return withDb(async (db) => {
       const question = await db.get(
-        'SELECT * FROM questions WHERE id = ? AND form_id = ?',
+        'SELECT * FROM questions WHERE id = ? AND formId = ?',
         [questionId, formId]
       );
       
@@ -103,25 +84,21 @@ export const QuestionModel = {
       
       return {
         id: question.id,
-        text: question.question_text,
-        type: question.question_type,
+        text: question.questionText,
+        type: question.questionType,
         required: Boolean(question.required),
         options: question.options ? JSON.parse(question.options) : [],
-        createdAt: question.created_at,
-        updatedAt: question.updated_at
+        createdAt: question.createdAt,
+        updatedAt: question.updatedAt
       };
-    } finally {
-      await db.close();
-    }
+    });
   },
   
   update: async (formId, questionId, questionData) => {
-    const db = await getDb();
-    
-    try {
+    return withDb(async (db) => {
       // First check if the question exists
       const questionExists = await db.get(
-        'SELECT id FROM questions WHERE id = ? AND form_id = ?',
+        'SELECT id FROM questions WHERE id = ? AND formId = ?',
         [questionId, formId]
       );
       
@@ -134,12 +111,12 @@ export const QuestionModel = {
       const params = [];
       
       if (questionData.text !== undefined) {
-        updates.push('question_text = ?');
+        updates.push('questionText = ?');
         params.push(questionData.text);
       }
       
       if (questionData.type !== undefined) {
-        updates.push('question_type = ?');
+        updates.push('questionType = ?');
         params.push(questionData.type);
       }
       
@@ -158,28 +135,25 @@ export const QuestionModel = {
         return await QuestionModel.findById(formId, questionId);
       }
       
-      // Add updated_at timestamp and query parameters
-      updates.push('updated_at = CURRENT_TIMESTAMP');
+      // Add updatedAt timestamp and query parameters
+      updates.push('updatedAt = CURRENT_TIMESTAMP');
       params.push(questionId, formId);
       
       await db.run(
-        `UPDATE questions SET ${updates.join(', ')} WHERE id = ? AND form_id = ?`,
+        `UPDATE questions SET ${updates.join(', ')} WHERE id = ? AND formId = ?`,
         params
       );
       
+      // Note: This will open a new connection through withDb
       return await QuestionModel.findById(formId, questionId);
-    } finally {
-      await db.close();
-    }
+    });
   },
   
   delete: async (formId, questionId) => {
-    const db = await getDb();
-    
-    try {
+    return withDb(async (db) => {
       // First check if the question exists
       const questionExists = await db.get(
-        'SELECT id FROM questions WHERE id = ? AND form_id = ?',
+        'SELECT id FROM questions WHERE id = ? AND formId = ?',
         [questionId, formId]
       );
       
@@ -188,13 +162,11 @@ export const QuestionModel = {
       }
       
       await db.run(
-        'DELETE FROM questions WHERE id = ? AND form_id = ?',
+        'DELETE FROM questions WHERE id = ? AND formId = ?',
         [questionId, formId]
       );
       
       return true;
-    } finally {
-      await db.close();
-    }
+    });
   }
 };
