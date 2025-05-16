@@ -29,14 +29,8 @@ router.post('/', async (req, res) => {
 
         const user = await userDb.createUser(email, password, name);
 
-        // Add timestamp fields if they don't exist
-        const responseUser = {
-            ...user,
-            createdAt: user.createdAt || new Date().toISOString(),
-            updatedAt: user.updatedAt || new Date().toISOString()
-        };
-
-        res.status(201).json(responseUser);
+        // Return user with original timestamps
+        res.status(201).json(user);
     } catch (error) {
         if (error.message === 'Email already exists') {
             res.status(409).json({ error: error.message });
@@ -68,20 +62,11 @@ router.patch('/:userId', authenticateToken, async (req, res) => {
         const userId = req.params.userId;
         const { email, name } = req.body;
 
-        // Get the current user to preserve createdAt
-        const existingUser = await userDb.getUserById(userId);
-
         // Update the user
         const updatedUser = await userDb.updateUser(userId, { email, name });
 
-        // Ensure timestamps are correct
-        const responseUser = {
-            ...updatedUser,
-            createdAt: existingUser.createdAt, // Preserve original creation time
-            updatedAt: new Date().toISOString() // Set new update time
-        };
-
-        res.status(200).json(responseUser);
+        // Return user with database-provided timestamps
+        res.status(200).json(updatedUser);
     } catch (error) {
         if (error.message === 'User not found') {
             res.status(404).json({ error: 'User not found' });

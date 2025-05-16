@@ -783,20 +783,30 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
+          description: Vormi unikaalne identifikaator
+        userId:
+          type: integer
+          description: Vormi loonud kasutaja ID
         title:
           type: string
+          description: Vormi pealkiri
         description:
           type: string
+          description: Vormi kirjeldus
         createdAt:
           type: string
           format: date-time
+          description: Loomise ajatempel
         updatedAt:
           type: string
           format: date-time
+          description: Viimase uuenduse ajatempel
       required:
         - id
+        - userId
         - title
+        - description
         - createdAt
         - updatedAt
 

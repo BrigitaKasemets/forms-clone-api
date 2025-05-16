@@ -1,3 +1,6 @@
+// Load environment variables
+import 'dotenv/config';
+
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 import yaml from 'yaml';
@@ -120,22 +123,6 @@ app.use('/forms', formsRouter);
 app.use('/forms/:formId/questions', questionsRouter);
 app.use('/forms/:formId/responses', responsesRouter);
 app.use('/users', usersRouter);
-
-// User Routes
-app.post('/users', async (req, res) => {
-    try {
-        const { email, password, name } = req.body;
-        const user = await userDb.createUser(email, password, name);
-        res.status(201).json(user);
-    } catch (error) {
-        if (error.message === 'Email already exists') {
-            res.status(400).json({ error: error.message });
-        } else {
-            console.error('User creation error:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    }
-});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

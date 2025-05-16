@@ -44,14 +44,13 @@ export const userDb = {
                 [email, hashedPassword, name]
             );
 
-            // Return the created user
-            return {
-                id: result.lastID,
-                email,
-                name,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            };
+            // Get the created user with timestamps from database
+            const createdUser = await db.get(
+                'SELECT id, email, name, createdAt, updatedAt FROM users WHERE id = ?',
+                [result.lastID]
+            );
+            
+            return createdUser;
         });
     },
 
@@ -186,7 +185,8 @@ export const formDb = {
                 'INSERT INTO forms (userId, title, description) VALUES (?, ?, ?)',
                 [userId, title, description]
             );
-            return { id: result.lastID, userId, title, description };
+            // Return the created form with timestamps from database
+            return await db.get('SELECT * FROM forms WHERE id = ?', [result.lastID]);
         });
     },
 

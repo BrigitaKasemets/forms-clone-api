@@ -709,6 +709,7 @@ paths:
           $ref: "#/components/responses/ServerError"
       security:
       - BearerAuth: [ ]
+
 components:
   securitySchemes:
     BearerAuth:
@@ -790,20 +791,30 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
+          description: Unique identifier for the form
+        userId:
+          type: integer
+          description: ID of the user who created the form
         title:
           type: string
+          description: Title of the form
         description:
           type: string
+          description: Description of the form
         createdAt:
           type: string
           format: date-time
+          description: Creation timestamp
         updatedAt:
           type: string
           format: date-time
+          description: Last update timestamp
       required:
         - id
+        - userId
         - title
+        - description
         - createdAt
         - updatedAt
 
@@ -814,7 +825,7 @@ components:
           type: string
         type:
           type: string
-          enum: [shorttext, paragraph, multiplechoice, checkbox, dropdown]
+          enum: [shorttext, paragraph, multiple choice, checkbox, dropdown]
         options:
           type: array
           items:
@@ -830,7 +841,7 @@ components:
           type: string
         type:
           type: string
-          enum: [shorttext, paragraph, multiplechoice, checkbox, dropdown]
+          enum: [shorttext, paragraph, multiple choice, checkbox, dropdown]
 
     Question:
       type: object
@@ -841,7 +852,7 @@ components:
           type: string
         type:
           type: string
-          enum: [shorttext, paragraph, multiplechoice, checkbox, dropdown]
+          enum: [shorttext, paragraph, multiple choice, checkbox, dropdown]
         options:
           type: array
           items:

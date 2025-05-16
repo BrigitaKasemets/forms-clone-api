@@ -18,8 +18,8 @@ export const FormModel = {
             title: form.title,
             description: form.description,
             userId: form.userId,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            createdAt: form.createdAt,
+            updatedAt: form.updatedAt
         };
     },
 

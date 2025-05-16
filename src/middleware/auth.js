@@ -2,6 +2,20 @@ import jwt from 'jsonwebtoken';
 // The crypto module is no longer needed as we're using jwt for token generation
 import { sessionDb } from '../db/db.js';
 
+// Constants for token configuration
+export const TOKEN_EXPIRATION = '24h';
+
+// Secret key for JWT - using environment variable
+// For proper security, the JWT_SECRET should be set in the .env file
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// Verify JWT_SECRET is available
+if (!JWT_SECRET) {
+    console.error('ERROR: JWT_SECRET environment variable is not set! Authentication will fail.');
+    // Terminate the application since auth won't work without a secret
+    process.exit(1);
+}
+
 // Generate a JWT token
 const generateToken = (userId, email, name) => {
     // Create payload with available information
@@ -14,9 +28,9 @@ const generateToken = (userId, email, name) => {
     
     return jwt.sign(
         payload, 
-        process.env.JWT_SECRET, 
+        JWT_SECRET, 
         { 
-            expiresIn: '24h',
+            expiresIn: TOKEN_EXPIRATION,
             // Add issued at timestamp for token freshness tracking
             // and subject for user identification
             subject: userId.toString()
@@ -41,7 +55,7 @@ export const authenticateToken = async (req, res, next) => {
 
     try {
         // First verify JWT is valid
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET);
         
         // Then check if session exists in database
         const session = await sessionDb.verifySession(token);
@@ -93,7 +107,7 @@ export const sessions = {
     verify: async (token) => {
         try {
             // Verify the JWT
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const decoded = jwt.verify(token, JWT_SECRET);
             
             // Also check if session exists in database
             const session = await sessionDb.verifySession(token);

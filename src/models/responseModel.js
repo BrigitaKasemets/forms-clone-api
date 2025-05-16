@@ -21,16 +21,13 @@ export const ResponseModel = {
         }
         
         // Insert the response record
-        const currentTime = new Date().toISOString();
         const responseResult = await db.run(
-          `INSERT INTO responses (formId, respondentName, respondentEmail, createdAt, updatedAt) 
-           VALUES (?, ?, ?, ?, ?)`,
+          `INSERT INTO responses (formId, respondentName, respondentEmail) 
+           VALUES (?, ?, ?)`,
           [
             formId,
             responseData.respondentName || null,
-            responseData.respondentEmail || null,
-            currentTime,
-            currentTime
+            responseData.respondentEmail || null
           ]
         );
         
