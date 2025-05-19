@@ -55,14 +55,6 @@ paths:
       responses:
         "200":
           description: Session ended successfully (logged out)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Logged out!"
         "401":
           description: Not authenticated
         "400":
@@ -89,8 +81,6 @@ paths:
                   $ref: "#/components/schemas/Form"
         "401":
           description: Unauthorized
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -146,8 +136,6 @@ paths:
           description: Form not found
         "401":
           description: Unauthorized
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -238,8 +226,6 @@ paths:
           description: Form not found
         "401":
           description: Unauthorized
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -308,8 +294,6 @@ paths:
           description: Question not found
         "401":
           description: Unauthorized
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -410,8 +394,6 @@ paths:
           description: Form not found
         "401":
           description: Unauthorized
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -480,8 +462,6 @@ paths:
           description: Response not found
         "401":
           description: Unauthorized
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -574,8 +554,6 @@ paths:
                   $ref: "#/components/schemas/User"
         "401":
           description: Unauthorized
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -600,7 +578,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
         "400":
-          description: Missing required fields
+          description: Bad request - Validation failed
           content:
             application/json:
               schema:
@@ -608,7 +586,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Missing required fields: email, password, and name are required"
+                    example: "Password validation failed: Password must be at least 8 characters long, Password must contain at least 3 of the following: uppercase letters, lowercase letters, numbers, special characters"
         "409":
           description: User already exists with this email
           content:
@@ -645,8 +623,6 @@ paths:
           description: User not found
         "401":
           description: Unauthorized
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:

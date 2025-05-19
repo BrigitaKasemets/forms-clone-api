@@ -6,9 +6,6 @@ import { TOKEN_EXPIRATION } from '../middleware/auth.js';
 // Use the same JWT secret as in auth.js
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// We don't need to check JWT_SECRET here as auth.js already does this
-// and terminates the app if it's not set
-
 export const SessionsController = {
     // Login user and create a session
     login: async (req, res) => {
@@ -47,7 +44,7 @@ export const SessionsController = {
     logout: async (req, res) => {
         // With JWT, logout happens client-side by removing the token
         // This endpoint is mostly for API completeness
-        res.status(200).json({ message: 'Logout successful' });
+        res.status(200).send();
     },
 
     // Validate token and return user info

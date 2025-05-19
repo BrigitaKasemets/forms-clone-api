@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
 router.delete('/', authenticateToken, async (req, res) => {
     try {
         await sessions.remove(req.user.token);
-        res.status(200).json({ message: 'Logged out!' });
+        res.status(200).send();
     } catch (error) {
         console.error('Logout error:', error);
         res.status(500).json({ error: 'Internal server error' });

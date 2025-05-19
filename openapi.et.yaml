@@ -55,14 +55,6 @@ paths:
       responses:
         "200":
           description: Seanss on kustutatud (välja logitud)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Olete välja logitud"
         "401":
           description: Pole autentitud
         "400":
@@ -89,8 +81,6 @@ paths:
                   $ref: "#/components/schemas/Form"
         "401":
           description: Autoriseerimata
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -146,8 +136,6 @@ paths:
           description: Vormi ei leitud
         "401":
           description: Autoriseerimata
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -238,8 +226,6 @@ paths:
           description: Vormi ei leitud
         "401":
           description: Autoriseerimata
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -308,8 +294,6 @@ paths:
           description: Küsimust ei leitud
         "401":
           description: Autoriseerimata
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -410,8 +394,6 @@ paths:
           description: Vormi ei leitud
         "401":
           description: Autoriseerimata
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -480,8 +462,6 @@ paths:
           description: Vastust ei leitud
         "401":
           description: Autoriseerimata
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -574,8 +554,6 @@ paths:
                   $ref: "#/components/schemas/User"
         "401":
           description: Autoriseerimata
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
@@ -608,7 +586,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Päringus on puudu vajalikud väljad: email, parool ja nimi on nõutud"
+                    example: "Päringus on puudu vajalikud väljad: email, parool ja nimi on nõutud. Parool peab olema vähemalt 8 tähemärki pikk, Parool peab sisaldama vähemalt 3 järgnevast: suurtähed, väiketähed, numbrid, erimärgid"
         "409":
             description: Selle emailiga kasutaja on juba olemas
         "500":
@@ -638,8 +616,6 @@ paths:
           description: Kasutajat ei leitud
         "401":
           description: Autoriseerimata
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
