@@ -57,8 +57,6 @@ paths:
           description: Seanss on kustutatud (välja logitud)
         "401":
           description: Pole autentitud
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/ServerError"
       security:
