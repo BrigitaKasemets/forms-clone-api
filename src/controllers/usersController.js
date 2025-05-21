@@ -45,11 +45,24 @@ export const UsersController = {
     // Update a user
     updateUser: async (req, res) => {
         try {
+            // Log the request body to verify password is included
+            console.log('User update request body:', {
+                ...req.body,
+                password: req.body.password ? '[REDACTED]' : undefined
+            });
+
             const updatedUser = await UserModel.update(req.params.id, req.body);
             if (!updatedUser) {
                 return res.status(404).json({ error: 'User not found' });
             }
-            res.status(200).json(updatedUser);
+
+            // Indicate password changed if it was included in the request
+            const response = {
+                ...updatedUser,
+                passwordChanged: req.body.password ? true : false
+            };
+
+            res.status(200).json(response);
         } catch (error) {
             console.error(`Error updating user ${req.params.id}:`, error);
             res.status(500).json({ error: 'Internal server error' });

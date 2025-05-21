@@ -6,12 +6,90 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Initialize database connection (without creating tables)
+// Initialize database connection and ensure tables exist
 export const initializeDb = async () => {
-    return await open({
+    const db = await open({
         filename: path.join(__dirname, '../../forms.db'),
         driver: sqlite3.Database
     });
+
+    // Create users table
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        name TEXT NOT NULL,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Create sessions table
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS sessions (
+        token TEXT PRIMARY KEY,
+        userId INTEGER NOT NULL,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (userId) REFERENCES users (id)
+      )
+    `);
+
+    // Create forms table
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS forms (
+        id INTEGER PRIMARY KEY,
+        userId INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (userId) REFERENCES users (id)
+      )
+    `);
+
+    // Create questions table
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS questions (
+        id INTEGER PRIMARY KEY,
+        formId INTEGER NOT NULL,
+        questionText TEXT NOT NULL,
+        questionType TEXT NOT NULL,
+        required BOOLEAN DEFAULT FALSE,
+        options TEXT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (formId) REFERENCES forms (id) ON DELETE CASCADE
+      )
+    `);
+
+    // Create responses table
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS responses (
+        id INTEGER PRIMARY KEY,
+        formId INTEGER NOT NULL,
+        respondentName TEXT,
+        respondentEmail TEXT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (formId) REFERENCES forms (id) ON DELETE CASCADE
+      )
+    `);
+
+    // Create answer_values table
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS answer_values (
+        id INTEGER PRIMARY KEY,
+        responseId INTEGER NOT NULL,
+        questionId INTEGER NOT NULL,
+        answerText TEXT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (responseId) REFERENCES responses (id) ON DELETE CASCADE,
+        FOREIGN KEY (questionId) REFERENCES questions (id) ON DELETE CASCADE
+      )
+    `);
+
+    return db;
 };
 
 /**
@@ -44,47 +122,61 @@ export const userDb = {
                 [email, hashedPassword, name]
             );
 
-            // Get the created user with timestamps from database
-            const createdUser = await db.get(
+            // Get and return the created user with timestamps from database
+            return await db.get(
                 'SELECT id, email, name, createdAt, updatedAt FROM users WHERE id = ?',
                 [result.lastID]
             );
-            
-            return createdUser;
         });
     },
 
     async getAllUsers() {
         return withDb(async (db) => {
-            return await db.all('SELECT id, email, name, createdAt as createdAt, updatedAt as updatedAt FROM users');
+            return await db.all('SELECT id, email, name, createdAt, updatedAt FROM users');
         });
     },
 
     async verifyUser(email, password) {
         return withDb(async (db) => {
+            console.log('Verifying user with email:', email);
+
+            // Get the latest user data from database
             const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
 
             if (!user) {
+                console.log('User not found with email:', email);
                 return null;
             }
 
-            const validPassword = await bcrypt.compare(password, user.password);
-            if (!validPassword) {
+            console.log('Found user ID:', user.id);
+
+            try {
+                // Use bcrypt.compare to securely compare the provided password with the stored hash
+                const validPassword = await bcrypt.compare(password, user.password);
+                console.log('Password verification result:', validPassword);
+
+                if (!validPassword) {
+                    console.log('Password verification failed for user:', user.id);
+                    return null;
+                }
+
+                console.log('Password verified successfully for user:', user.id);
+                return {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name
+                };
+            } catch (error) {
+                console.error('Error during password verification:', error);
                 return null;
             }
-
-            return {
-                id: user.id,
-                email: user.email,
-                name: user.name
-            };
         });
     },
 
     async getUserById(userId) {
         return withDb(async (db) => {
             const user = await db.get(
-                'SELECT id, email, name, createdAt as createdAt, updatedAt as updatedAt FROM users WHERE id = ?',
+                'SELECT id, email, name, createdAt, updatedAt FROM users WHERE id = ?',
                 [userId]
             );
 
@@ -112,14 +204,33 @@ export const userDb = {
             const updateFields = [];
             const values = [];
 
+            console.log('Update fields received:', Object.keys(updates));
+
             if (updates.email) {
                 updateFields.push('email = ?');
                 values.push(updates.email);
+                console.log('Will update email');
             }
 
             if (updates.name) {
                 updateFields.push('name = ?');
                 values.push(updates.name);
+                console.log('Will update name');
+            }
+
+            if (updates.password) {
+                try {
+                    // Hash the password before storing it
+                    const hashedPassword = await bcrypt.hash(updates.password, 10);
+                    updateFields.push('password = ?');
+                    values.push(hashedPassword);
+                    console.log('Will update password, hash generated');
+                } catch (error) {
+                    console.error('Error hashing password during update:', error);
+                    throw error;
+                }
+            } else {
+                console.log('No password update requested');
             }
 
             // Always update the updatedAt timestamp
@@ -131,16 +242,57 @@ export const userDb = {
             // Only proceed if there are fields to update
             if (updateFields.length > 0) {
                 const query = `UPDATE users SET ${updateFields.join(', ')} WHERE id = ?`;
-                await db.run(query, values);
+                console.log('Executing SQL query:', query.replace(/\?/g, '***'));
+                console.log('Number of values:', values.length);
+
+                try {
+                    const result = await db.run(query, values);
+                    console.log('Update result:', result);
+                    console.log('Rows modified:', result.changes);
+
+                    if (result.changes === 0) {
+                        console.warn('Warning: No rows were updated despite valid user ID');
+                    }
+                } catch (error) {
+                    console.error('Error executing update query:', error);
+                    throw error;
+                }
+            }
+
+            // Verify that the password has been updated if that was requested
+            if (updates.password) {
+                const updatedUser = await db.get('SELECT id, password FROM users WHERE id = ?', [userId]);
+                console.log('Password update verification - User found:', !!updatedUser);
             }
 
             // Get and return the updated user
-            const updatedUser = await db.get(
-                'SELECT id, email, name, createdAt as createdAt, updatedAt as updatedAt FROM users WHERE id = ?',
+            return await db.get(
+                'SELECT id, email, name, createdAt, updatedAt FROM users WHERE id = ?',
                 [userId]
             );
-            
-            return updatedUser;
+        });
+    },
+
+    async deleteUser(userId) {
+        return withDb(async (db) => {
+            // Verify user exists
+            const user = await db.get('SELECT id FROM users WHERE id = ?', [userId]);
+
+            if (!user) {
+                throw new Error('User not found');
+            }
+
+            // Delete related sessions first due to foreign key constraints
+            await db.run('DELETE FROM sessions WHERE userId = ?', [userId]);
+
+            // Delete any forms created by the user
+            // Note: This will cascade delete related questions and responses due to ON DELETE CASCADE
+            await db.run('DELETE FROM forms WHERE userId = ?', [userId]);
+
+            // Delete the user
+            await db.run('DELETE FROM users WHERE id = ?', [userId]);
+
+            return true;
         });
     }
 };
@@ -159,14 +311,13 @@ export const sessionDb = {
 
     async verifySession(token) {
         return withDb(async (db) => {
-            const session = await db.get(
+            return await db.get(
                 `SELECT s.*, u.email, u.name
                  FROM sessions s
                  JOIN users u ON s.userId = u.id
                  WHERE s.token = ?`,
                 [token]
             );
-            return session;
         });
     },
 
@@ -222,9 +373,8 @@ export const formDb = {
                 [title, description, formId]
             );
 
-            // Get the updated form details
-            const updatedForm = await db.get('SELECT * FROM forms WHERE id = ?', [formId]);
-            return updatedForm;
+            // Get and return the updated form details
+            return await db.get('SELECT * FROM forms WHERE id = ?', [formId]);
         });
     },
 
@@ -242,3 +392,4 @@ export const formDb = {
         });
     }
 };
+

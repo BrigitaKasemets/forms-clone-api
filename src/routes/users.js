@@ -139,13 +139,37 @@ router.get('/:userId', authenticateToken, async (req, res) => {
 router.patch('/:userId', authenticateToken, async (req, res) => {
     try {
         const userId = req.params.userId;
-        const { email, name } = req.body;
+        const { email, name, password } = req.body;
 
-        // Update the user
-        const updatedUser = await userDb.updateUser(userId, { email, name });
+        // Create update object with all provided fields
+        const updateData = {};
+        if (email) updateData.email = email;
+        if (name) updateData.name = name;
+
+        // Only include password if it was provided and validate it
+        if (password) {
+            // Validate password strength if it's being updated
+            const passwordErrors = validatePassword(password);
+            if (passwordErrors.length > 0) {
+                const errorMessage = 'Password validation failed: ' + passwordErrors.join(', ');
+                return res.status(400).json({
+                    message: errorMessage
+                });
+            }
+
+            updateData.password = password;
+        }
+
+        console.log('Fields being updated:', Object.keys(updateData));
+
+        // Update the user with all provided fields
+        const updatedUser = await userDb.updateUser(userId, updateData);
 
         // Return user with database-provided timestamps
-        res.status(200).json(updatedUser);
+        res.status(200).json({
+            ...updatedUser,
+            passwordUpdated: !!password
+        });
     } catch (error) {
         if (error.message === 'User not found') {
             res.status(404).json({ error: 'User not found' });
@@ -157,8 +181,35 @@ router.patch('/:userId', authenticateToken, async (req, res) => {
 });
 
 // Delete user
-router.delete('/:userId', authenticateToken, (req, res) => {
-    res.status(204).send();
+router.delete('/:userId', authenticateToken, async (req, res) => {
+    try {
+        let userId = req.params.userId;
+
+        // Handle the special "me" identifier by using the authenticated user's ID
+        if (userId === 'me') {
+            userId = req.user.userId; // Get the ID from the JWT token payload
+        }
+
+        // Convert the ID to a number to ensure consistent type comparison with the database
+        userId = Number(userId);
+
+        // Validate that we have a valid numeric ID
+        if (isNaN(userId)) {
+            return res.status(400).json({ error: 'Invalid user ID' });
+        }
+
+        const result = await userDb.deleteUser(userId);
+        
+        if (!result) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        
+        res.status(204).send();
+    } catch (error) {
+        console.error(`Error deleting user ${req.params.userId}:`, error);
+        res.status(500).json({ error: error.message || 'Internal server error' });
+    }
 });
 
 export default router;
+

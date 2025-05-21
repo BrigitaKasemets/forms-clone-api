@@ -8,12 +8,10 @@ import yaml from 'yaml';
 import { readFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { authenticateToken } from './middleware/auth.js';
 import sessionsRouter from './routes/sessions.js';
 import formsRouter from './routes/forms.js';
 import questionsRouter from './routes/questions.js';
 import responsesRouter from './routes/responses.js';
-import { userDb } from './db/db.js';
 import usersRouter from './routes/users.js';
 
 // Determine project root directory
@@ -53,8 +51,13 @@ if (!swaggerDocumentEn && !swaggerDocumentEt) {
 
 const app = express();
 
-// Enable CORS for all routes
-app.use(cors());
+const corsOptions = {
+    origin: 'http://localhost:3001', // Your frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
