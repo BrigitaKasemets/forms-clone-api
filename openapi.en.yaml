@@ -953,9 +953,12 @@ components:
         updatedAt:
           type: string
           format: date-time
+        passwordUpdated:
+            type: boolean
       required:
         - id
         - email
         - name
         - createdAt
         - updatedAt
+        - passwordUpdated

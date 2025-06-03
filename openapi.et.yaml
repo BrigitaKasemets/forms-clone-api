@@ -943,9 +943,13 @@ components:
         updatedAt:
           type: string
           format: date-time
+        passwordUpdated:
+          type: boolean
+          description: Kas parool on uuendatud pärast viimast sisselogimist
       required:
         - id
         - email
         - name
         - createdAt
         - updatedAt
+        - passwordUpdated

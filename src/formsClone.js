@@ -52,7 +52,7 @@ if (!swaggerDocumentEn && !swaggerDocumentEt) {
 const app = express();
 
 const corsOptions = {
-    origin: 'http://localhost:3001', // Your frontend URL
+    origin:  ['http://localhost:3002', 'http://localhost:57594'], // Your frontend URL
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 };
