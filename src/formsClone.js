@@ -125,6 +125,11 @@ app.get('/api-docs', (req, res) => {
     res.redirect('/en');
 });
 
+// Health check endpoint for testing
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'OK', message: 'REST API is running' });
+});
+
 // Routes
 app.use('/sessions', sessionsRouter);
 app.use('/forms', formsRouter);
